@@ -13,31 +13,46 @@
   };
 
   /**
+   * our Todo class
+   */
+  const Todo = function(props) {
+    this.completed = false;
+    for (var prop in props) {
+      this[prop] = props[prop];
+    }
+    this.editing = false;
+
+    if (this.id > Todo.nextId) {
+      Todo.nextId = this.id + 1;
+    } else if (!this.id) {
+      this.id = Todo.nextId++;
+    }
+  };
+
+  // the next Todo unique id
+  Todo.nextId = 1;
+
+  /**
    * Our model represents the data structure.
    */
   const model = {
     todos: [],
 
+    // get the total number of todos
     get total() {
       return this.todos.length;
     },
 
-    get completed() {
-      return this.todos.filter(function(todo) {
-        return todo.completed;
-      });
-    },
-
+    // get the number of remaining (totals - completed) todos
     get remaining() {
       return this.total - this.completed.length;
     },
 
-    get nextId() {
-      return model.todos.length
-        ? model.todos.map(function(todo) { return todo.id; })
-            .sort()
-            .pop() + 1
-        : 1;
+    // get a filtered list of the completed todos
+    get completed() {
+      return this.todos.filter(function(todo) {
+        return todo.completed;
+      });
     },
 
     _destroy: function(todo) {
@@ -49,26 +64,22 @@
     },
 
     _create: function(text) {
-      var todo = {
-        id: this.nextId,
-        text: text,
-        completed: false,
-        checked: false,
-        editing: false
-      };
+      var todo = new Todo({text: text});
       this.todos.push(todo);
       return todo;
     }
   };
 
+  // a list of available filters
   const FILTERS = [
-    {id: 'all', slug: '', label: 'All'},
+    {id: 'none', slug: '', label: 'All'},
     {id: 'active', slug: 'active', label: 'Active'},
     {id: 'completed', slug: 'completed', label: 'Completed'}
   ];
 
+  // filter functions
   const FILTERS_BY_ID = {
-    all: function(todo) {
+    none: function(todo) {
       return true;
     },
     active: function(todo) {
@@ -79,20 +90,32 @@
     }
   };
 
+  // the "all" filter
+  const ALL_FILTER = 'all';
+
+  /**
+   * our controller exposes all of the app's actions,
+   * which update the model and re-render when
+   * appropriate.
+   */
   const controller = {
 
+    // our flag for whether to select or de-select all
+    // todos when the user clicks the "toggle all"
+    // button
     allChecked: false,
 
-    // the filter function (used in the template)
-    filter: 'all',
+    // show all todos by default
+    filter: ALL_FILTER,
 
+    // get the list of filtered todos
     get filteredTodos() {
       var filter = FILTERS_BY_ID[this.filter];
       return model.todos.filter(filter);
     },
 
-    // this is a template helper that returns a list of the filters
-    // with the `selected` property set to match the current filter
+    // get a list of the filters with the `selected`
+    // property set to match the current filter
     get filters() {
       return FILTERS.map(function(filter) {
         filter.selected = (filter.id === this.filter);
@@ -128,6 +151,7 @@
       syncAndRender();
     },
 
+    // clear the completed todos, then sync and render
     clearCompleted: function() {
       model.completed.forEach(function(todo) {
         model._destroy(todo);
@@ -135,12 +159,19 @@
       syncAndRender();
     },
 
+    // set the checked state of a single todo
     setChecked: function(todo, checked) {
       todo.completed = checked;
       syncAndRender();
     },
 
+    // set the editing flag for a single todo, sync and
+    // render, then focus and select its text input
     edit: function(todo) {
+      // revert editing on the other elements
+      model.todos.forEach(function(todo) {
+        todo.editing = false;
+      });
       todo.editing = true;
       render();
       var input = document.querySelector('#todo-' + todo.id + ' .edit');
@@ -148,17 +179,22 @@
       input.select();
     },
 
+    // destoy a todo, then sync and render
     destroy: function(todo) {
       model._destroy(todo);
       syncAndRender();
     }
   };
 
+  // look for saved todos in localStorage
   var todos = localStorage.todos;
   if (todos) {
-    model.todos = JSON.parse(todos);
+    model.todos = JSON.parse(todos).map(function(props) {
+      return new Todo(props);
+    });
   }
 
+  // sync the model todos to localStorage
   const sync = function() {
     var todos = model.todos.slice().map(function(todo) {
       return Object.assign({}, todo, {
@@ -169,32 +205,31 @@
     localStorage.todos = JSON.stringify(todos);
   };
 
-  const render = tagalong.render('.todoapp', model, controller)
+  // render and get the render function for future updates
+  const render = tagalong.render('.todoapp', model,
+                                 controller)
     .bind(null, model);
 
+  // sync and render in one call
   const syncAndRender = function() {
     sync();
     render();
   };
 
+  // a simple hashchange "router"
   const hashchange = function() {
-    switch (location.hash) {
-      case '':
-      case '#':
-      case '#/':
-        controller.filter = 'all';
-        break;
-      case '#/active':
-        controller.filter = 'active';
-        break;
-      case '#/completed':
-        controller.filter = 'completed';
-        break;
+    var match = location.hash.match(/^#\/(\w*)$/);
+    if (match && match[1] in FILTERS_BY_ID) {
+      controller.filter = match[1];
+    } else {
+      controller.filter = ALL_FILTER;
     }
     render();
   };
 
+  // update the filter on hashchange
   window.addEventListener('hashchange', hashchange);
+  // fire the hashchange handler if there's a hash
   if (location.hash) {
     hashchange();
   }
