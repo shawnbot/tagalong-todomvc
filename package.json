@@ -1,5 +1,8 @@
 {
   "private": true,
+  "scripts": {
+    "update-assets": "cp node_modules/todomvc-common/base.* assets/todomvc-common; cp node_modules/todomvc-app-css/*.css assets/todomvc-app-css; cp node_modules/tagalong/tagalong.js* assets/tagalong"
+  },
   "dependencies": {
     "tagalong": "^2.1.1",
     "todomvc-app-css": "^2.0.0",
