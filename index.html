@@ -3,22 +3,23 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>Template • TodoMVC</title>
+		<title>Tagalong • TodoMVC</title>
 		<link rel="stylesheet" href="node_modules/todomvc-common/base.css">
 		<link rel="stylesheet" href="node_modules/todomvc-app-css/index.css">
+    <link rel="stylesheet" href="css/app.css">
 	</head>
 	<body>
 		<section class="todoapp">
 			<header class="header">
 				<h1>todos</h1>
-        <input autofocus class="new-todo"
+        <input tabindex="0" autofocus class="new-todo"
           placeholder="What needs to be done?"
           t-value="''"
           t-onkeydown="(d, e) => insertOnEnter(e, d)">
 			</header>
 			<!-- This section should be hidden by default and shown when there are todos -->
 			<section class="main" t-hidden="total ? null : 'hidden'">
-        <input class="toggle-all" type="checkbox" t-onchange="() => toggleAll()">
+        <input class="toggle-all" tabindex="0" type="checkbox" t-onchange="() => toggleAll()">
 				<label for="toggle-all">Mark all as complete</label>
 				<ul class="todo-list">
 					<!-- These are here just to show the structure of the list items -->
@@ -27,13 +28,16 @@
             t-id="todo-{{ id }}"
             t-class="{completed: completed, editing: editing}">
             <div class="view">
-              <input class="toggle" type="checkbox"
+              <input class="toggle" tabindex="0" type="checkbox"
                 t-checked="completed ? 'checked' : null"
                 t-onchange="(d, e) => setChecked(d, e.target.checked)">
 							<label t-text="text" t-ondblclick="(d) => edit(d)">Taste JavaScript</label>
-              <button class="destroy" t-onclick="(d) => destroy(d)"></button>
+              <button class="destroy" tabindex="0" aria-label="delete"
+                t-onclick="(d) => destroy(d)">&times;</button>
 						</div>
-            <input class="edit" t-value="text" t-onkeydown="(d, e) => saveOnEnter(e, d)">
+            <input class="edit" tabindex="0"
+              t-value="text"
+              t-onkeydown="(d, e) => saveOnEnter(e, d)">
 					</li>
 				</ul>
 			</section>
@@ -50,7 +54,7 @@
 					</li>
 				</ul>
 				<!-- Hidden if no completed items are left ↓ -->
-        <button class="clear-completed"
+        <button class="clear-completed" tabindex="0"
           t-hidden="completed.length ? null : 'hidden'"
           t-onclick="() => clearCompleted()">Clear completed</button>
 			</footer>
