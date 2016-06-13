@@ -1,8 +1,28 @@
 /*
+ * app-template.css overrides
+ */
 
-app-template.css overrides
+/* for IE 9 */
+[hidden] {
+  display: none;
+}
 
-remove this comment if used
-remove this file if not
+/* always */
+input[type],
+button {
+  cursor: pointer;
+}
 
-*/
+/* undo the base CSS's destroy button styles */
+.todo-list li .destroy {
+  display: initial;
+}
+
+.todo-list li .destroy:after {
+  content: '';
+}
+
+/* ensure that buttons get a focus ring */
+button:focus {
+  outline: 1px solid #cc9a9a;
+}
