@@ -1,29 +1,29 @@
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>Tagalong • TodoMVC</title>
-		<link rel="stylesheet" href="assets/todomvc-common/base.css">
-		<link rel="stylesheet" href="assets/todomvc-app-css/index.css">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tagalong • TodoMVC</title>
+    <link rel="stylesheet" href="assets/todomvc-common/base.css">
+    <link rel="stylesheet" href="assets/todomvc-app-css/index.css">
     <link rel="stylesheet" href="css/app.css">
-	</head>
-	<body>
-		<section class="todoapp">
-			<header class="header">
-				<h1>todos</h1>
+  </head>
+  <body>
+    <section class="todoapp">
+      <header class="header">
+        <h1>todos</h1>
         <input tabindex="0" autofocus class="new-todo"
           placeholder="What needs to be done?"
           t-value="''"
           t-onkeydown="(d, e) => insertOnEnter(e, d)">
-			</header>
-			<!-- This section should be hidden by default and shown when there are todos -->
-			<section class="main" t-hidden="total ? null : 'hidden'">
+      </header>
+      <!-- This section should be hidden by default and shown when there are todos -->
+      <section class="main" t-hidden="total ? null : 'hidden'">
         <input class="toggle-all" tabindex="0" type="checkbox" t-onchange="() => toggleAll()">
-				<label for="toggle-all">Mark all as complete</label>
-				<ul class="todo-list">
-					<!-- These are here just to show the structure of the list items -->
-					<!-- List items should get the class `editing` when editing and `completed` when marked as completed -->
+        <label for="toggle-all">Mark all as complete</label>
+        <ul class="todo-list">
+          <!-- These are here just to show the structure of the list items -->
+          <!-- List items should get the class `editing` when editing and `completed` when marked as completed -->
           <li t-each="filteredTodos"
             t-id="todo-{{ id }}"
             t-class="{completed: completed, editing: editing}">
@@ -31,45 +31,45 @@
               <input class="toggle" tabindex="0" type="checkbox"
                 t-checked="completed ? 'checked' : null"
                 t-onchange="(d, e) => setChecked(d, e.target.checked)">
-							<label t-text="text" t-ondblclick="(d) => edit(d)">Taste JavaScript</label>
+              <label t-text="text" t-ondblclick="(d) => edit(d)">Taste JavaScript</label>
               <button class="destroy" tabindex="0" aria-label="delete"
                 t-onclick="(d) => destroy(d)">&times;</button>
-						</div>
+            </div>
             <input class="edit" tabindex="0"
               t-value="text"
               t-onkeydown="(d, e) => saveOnEnter(e, d)">
-					</li>
-				</ul>
-			</section>
-			<!-- This footer should hidden by default and shown when there are todos -->
-			<footer class="footer" t-hidden="total ? null : 'hidden'">
-				<!-- This should be `0 items left` by default -->
+          </li>
+        </ul>
+      </section>
+      <!-- This footer should hidden by default and shown when there are todos -->
+      <footer class="footer" t-hidden="total ? null : 'hidden'">
+        <!-- This should be `0 items left` by default -->
         <span class="todo-count">
           <strong t-text="remaining">0</strong> item{{ remaining === 1 ? '' : 's' }} left
         </span>
-				<!-- Remove this if you don't implement routing -->
-				<ul class="filters">
-					<li t-each="filters">
+        <!-- Remove this if you don't implement routing -->
+        <ul class="filters">
+          <li t-each="filters">
             <a t-class="{selected: selected}" t-href="#/{{ slug }}">{{ label }}</a>
-					</li>
-				</ul>
-				<!-- Hidden if no completed items are left ↓ -->
+          </li>
+        </ul>
+        <!-- Hidden if no completed items are left ↓ -->
         <button class="clear-completed" tabindex="0"
           t-hidden="completed.length ? null : 'hidden'"
           t-onclick="() => clearCompleted()">Clear completed</button>
-			</footer>
-		</section>
-		<footer class="info">
-			<p>Double-click to edit a todo</p>
-			<!-- Remove the below line ↓ -->
-			<p>Template by <a href="http://sindresorhus.com">Sindre Sorhus</a></p>
-			<!-- Change this out with your name and url ↓ -->
-			<p>Created by <a href="https://github.com/shawnbot/tagalong-todomvc">Shawn Allen</a></p>
-			<p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
-		</footer>
-		<!-- Scripts here. Don't remove ↓ -->
-		<script src="assets/todomvc-common/base.js"></script>
-		<script src="assets/tagalong/tagalong.js"></script>
-		<script src="js/app.js"></script>
-	</body>
+      </footer>
+    </section>
+    <footer class="info">
+      <p>Double-click to edit a todo</p>
+      <!-- Remove the below line ↓ -->
+      <p>Template by <a href="http://sindresorhus.com">Sindre Sorhus</a></p>
+      <!-- Change this out with your name and url ↓ -->
+      <p>Created by <a href="https://github.com/shawnbot/tagalong-todomvc">Shawn Allen</a></p>
+      <p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
+    </footer>
+    <!-- Scripts here. Don't remove ↓ -->
+    <script src="assets/todomvc-common/base.js"></script>
+    <script src="assets/tagalong/tagalong.js"></script>
+    <script src="js/app.js"></script>
+  </body>
 </html>
