@@ -72,14 +72,14 @@
 
   // a list of available filters
   const FILTERS = [
-    {id: 'none', slug: '', label: 'All'},
+    {id: 'all', slug: '', label: 'All'},
     {id: 'active', slug: 'active', label: 'Active'},
     {id: 'completed', slug: 'completed', label: 'Completed'}
   ];
 
   // filter functions
   const FILTERS_BY_ID = {
-    none: function(todo) {
+    all: function(todo) {
       return true;
     },
     active: function(todo) {
