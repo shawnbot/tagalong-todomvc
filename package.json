@@ -1,7 +1,7 @@
 {
   "private": true,
   "dependencies": {
-    "tagalong": "^2.1.0",
+    "tagalong": "^2.1.1",
     "todomvc-app-css": "^2.0.0",
     "todomvc-common": "^1.0.0"
   }
