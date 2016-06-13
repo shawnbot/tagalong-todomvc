@@ -2,6 +2,8 @@
   'use strict';
 
   const KEY_ENTER = 13;
+  // returns a function that only applies the callback if the event's `keyCode`
+  // === `KEY_ENTER`.
   const onEnter = function(fn) {
     return function(event) {
       if (event.keyCode === KEY_ENTER) {
@@ -10,10 +12,11 @@
     };
   };
 
+  /**
+   * Our model represents the data structure.
+   */
   const model = {
     todos: [],
-
-    allChecked: false,
 
     get total() {
       return this.todos.length;
@@ -58,7 +61,13 @@
     }
   };
 
-  const filter = {
+  const FILTERS = [
+    {id: 'all', slug: '', label: 'All'},
+    {id: 'active', slug: 'active', label: 'Active'},
+    {id: 'completed', slug: 'completed', label: 'Completed'}
+  ];
+
+  const FILTERS_BY_ID = {
     all: function(todo) {
       return true;
     },
@@ -70,23 +79,28 @@
     }
   };
 
-  const FILTERS = [
-    {name: '', label: 'All', op: filter.all},
-    {name: 'active', label: 'Active', op: filter.active},
-    {name: 'completed', label: 'Completed', op: filter.completed}
-  ];
-
   const controller = {
 
-    filter: filter.all,
+    allChecked: false,
 
+    // the filter function (used in the template)
+    filter: 'all',
+
+    get filteredTodos() {
+      var filter = FILTERS_BY_ID[this.filter];
+      return model.todos.filter(filter);
+    },
+
+    // this is a template helper that returns a list of the filters
+    // with the `selected` property set to match the current filter
     get filters() {
       return FILTERS.map(function(filter) {
-        filter.selected = filter.op === this.filter;
+        filter.selected = (filter.id === this.filter);
         return filter;
       }, this);
     },
 
+    // insert a new todo when the user presses the enter key
     insertOnEnter: onEnter(function(event) {
       var text = event.target.value;
       if (text.trim().length) {
@@ -97,14 +111,17 @@
       }
     }),
 
+    // save the target todo item when the user presses the enter key
     saveOnEnter: onEnter(function(event, todo) {
       todo.text = event.target.value;
       todo.editing = false;
       syncAndRender();
     }),
 
+    // toggle the allChecked property, set the `completed` flag on all of the
+    // todos, then sync and render
     toggleAll: function() {
-      var checked = model.allChecked = !model.allChecked;
+      var checked = (this.allChecked = !this.allChecked);
       model.todos.forEach(function(todo) {
         todo.completed = checked;
       });
@@ -165,13 +182,13 @@
       case '':
       case '#':
       case '#/':
-        controller.filter = filter.all;
+        controller.filter = 'all';
         break;
       case '#/active':
-        controller.filter = filter.active;
+        controller.filter = 'active';
         break;
       case '#/completed':
-        controller.filter = filter.completed;
+        controller.filter = 'completed';
         break;
     }
     render();
